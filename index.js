@@ -4,7 +4,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express().use(bodyParser.json()); // creates express http server
-const { verify_token, page_access_token } = require('src/constants');
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
@@ -16,7 +15,8 @@ app.get('/', function (req, res) {
 
 // Facebook's webhook verification
 app.get('/webhook', (req, res) => {
-    
+
+  let VERIFY_TOKEN = process.env.VERIFY_TOKEN;
   // Parse the query params
   let mode = req.query['hub.mode'];
   let token = req.query['hub.verify_token'];
@@ -26,7 +26,7 @@ app.get('/webhook', (req, res) => {
   if (mode && token) {
   
     // Checks the mode and token sent is correct
-    if (mode === 'subscribe' && token === verify_token) {
+    if (mode === 'subscribe' && token === VERIFY_TOKEN) {
       
       // Responds with the challenge token from the request
       console.log('WEBHOOK_VERIFIED');

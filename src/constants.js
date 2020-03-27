@@ -1,8 +1,7 @@
-const dotenv = require('dotenv');
+require('dotenv').load()
 
-dotenv.config();
+const verify_token = process.env.VERIFY_TOKEN;
 
-module.exports = {
-    verify_token: process.env.VERIFY_TOKEN,
-    page_access_token: process.env.PAGE_ACCESS_TOKEN,
-  };
+const page_access_token = process.env.PAGE_ACCESS_TOKEN;
+
+export { verify_token, page_access_token };
