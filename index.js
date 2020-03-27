@@ -1,10 +1,10 @@
 'use strict';
-import {VERIFY_TOKEN, PAGE_ACCESS_TOKEN} from "src/constants.js";
 
 // Imports dependencies and set up http server
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express().use(bodyParser.json()); // creates express http server
+const { verify_token, page_access_token } = require('./config');
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
@@ -26,7 +26,7 @@ app.get('/webhook', (req, res) => {
   if (mode && token) {
   
     // Checks the mode and token sent is correct
-    if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+    if (mode === 'subscribe' && token === verify_token) {
       
       // Responds with the challenge token from the request
       console.log('WEBHOOK_VERIFIED');
