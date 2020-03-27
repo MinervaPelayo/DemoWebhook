@@ -1,1 +1,1 @@
-web: node index.js
+web: node -r dotenv/constants index.js
