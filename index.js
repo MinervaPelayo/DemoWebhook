@@ -1,7 +1,7 @@
 // Imports dependencies and set up http server
-import express from "express";
-import bodyParser from "body-parser";
-import request from "request";
+const express = require('express');
+const bodyParser = require('body-parser');
+const request = require('request');
 require("dotenv").config();
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
