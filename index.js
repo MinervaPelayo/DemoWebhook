@@ -1,50 +1,42 @@
 // Imports dependencies and set up http server
-const express = require('express');
-const bodyParser = require('body-parser');
-const request = require('request');
+const express = require("express");
+const bodyParser = require("body-parser");
+const request = require("request");
 require("dotenv").config();
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+
 const app = express().use(bodyParser.json()); // creates express http server
 
-const init = async () => {
-  // Index route
-  app.get("/", function(req, res) {
-    res.send("This is my webhook");
-  });
-  // Server error
-  app.use((error, req, res, next) => {
-    return res.status(error.status || 500).json({ error: error.message });
-  });
-  // Facebook's webhook verification
-  app.get("/webhook", (req, res) => {
-    const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+// Index route
+app.get("/", function(req, res) {
+  res.send("This is my webhook");
+});
 
-    // Parse the query params
-    let mode = req.query["hub.mode"];
-    let token = req.query["hub.verify_token"];
-    let challenge = req.query["hub.challenge"];
+// Facebook's webhook verification
+app.get("/webhook", (req, res) => {
+  const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
-    // Checks if a token and mode is in the query string of the request
-    if (mode && token) {
-      // Checks the mode and token sent is correct
-      if (mode === "subscribe" && token === VERIFY_TOKEN) {
-        // Responds with the challenge token from the request
-        console.log("WEBHOOK_VERIFIED");
-        res.status(200).send(challenge);
-      } else {
-        // Responds with '403 Forbidden' if verify tokens do not match
-        res.sendStatus(403);
-      }
+  // Parse the query params
+  let mode = req.query["hub.mode"];
+  let token = req.query["hub.verify_token"];
+  let challenge = req.query["hub.challenge"];
+
+  // Checks if a token and mode is in the query string of the request
+  if (mode && token) {
+    // Checks the mode and token sent is correct
+    if (mode === "subscribe" && token === VERIFY_TOKEN) {
+      // Responds with the challenge token from the request
+      console.log("WEBHOOK_VERIFIED");
+      res.status(200).send(challenge);
+    } else {
+      // Responds with '403 Forbidden' if verify tokens do not match
+      res.sendStatus(403);
     }
-  });
-  // Sets server port and logs message on success
-  app.listen(process.env.PORT || 1337, () =>
-    console.log("webhook is listening")
-  );
-};
-
-init();
+  }
+});
+// Sets server port and logs message on success
+app.listen(process.env.PORT || 1337, () => console.log("webhook is listening"));
 
 // Creates the endpoint for our webhook
 app.post("/webhook", (req, res) => {
@@ -97,18 +89,18 @@ function handleMessage(sender_psid, received_message) {
 function callSendAPI(sender_psid, response) {
   // Construct the message body
   let request_body = {
-    'recipient': {
-      'id': sender_psid
+    recipient: {
+      id: sender_psid
     },
-    'message': response
+    message: response
   };
   // Send the HTTP request to the Messenger Platform
   request(
     {
-      'uri': 'https://graph.facebook.com/v2.6/me/messages',
-      'qs': { 'access_token': PAGE_ACCESS_TOKEN },
-      'method': 'POST',
-      'json': request_body
+      uri: "https://graph.facebook.com/v2.6/me/messages",
+      qs: { access_token: PAGE_ACCESS_TOKEN },
+      method: "POST",
+      json: request_body
     },
     (err, res, body) => {
       if (!err) {
