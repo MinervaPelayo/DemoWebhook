@@ -45,23 +45,23 @@ app.post("/webhook", (req, res) => {
 
   // Checks this is an event from a page subscription
   if (body.object === "page") {
-    // Returns a '200 OK' response to all requests
-    res.status(200).send("RECEIVED");
     // Iterates over each entry - there may be multiple if batched
     body.entry.forEach(function(entry) {
       // Gets the message. entry.messaging is an array, but
       // will only ever contain one message, so we get index 0
       let webhook_event = entry.messaging[0];
-      console.log("/////Event: " + webhook_event);
+      console.log(webhook_event);
 
       // Get the sender PSID
       let sender_psid = webhook_event.sender.id;
-      console.log("/////Sender PSID: " + sender_psid);
+      console.log("Sender PSID: " + sender_psid);
 
       // Check if the event is a message and
       // pass the event to the appropriate handler function
       if (webhook_event.message) {
         handleMessage(sender_psid, webhook_event.message);
+        // Returns a '200 OK' response to all requests
+        res.sendStatus(200);
       }
     });
   } else {
@@ -103,7 +103,7 @@ function callSendAPI(sender_psid, response) {
     },
     (err, res, body) => {
       if (!err) {
-        console.log("////Message sent!");
+        console.log("Message sent!");
       } else {
         console.error("Unable to send message:" + err);
       }
