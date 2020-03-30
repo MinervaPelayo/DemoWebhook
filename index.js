@@ -60,9 +60,9 @@ app.post("/webhook", (req, res) => {
       // pass the event to the appropriate handler function
       if (webhook_event.message) {
         handleMessage(sender_psid, webhook_event.message);
-        // Returns a '200 OK' response to all requests
-        res.sendStatus(200);
       }
+      // Returns a '200 OK' response to all requests
+      res.sendStatus(200);
     });
   } else {
     // Returns a '404 Not Found' if event is not from a page subscription
