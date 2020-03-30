@@ -45,8 +45,10 @@ app.post("/webhook", (req, res) => {
 
   // Checks this is an event from a page subscription
   if (body.object === "page") {
+    res.sendStatus(200);
     // Iterates over each entry - there may be multiple if batched
     body.entry.forEach(function(entry) {
+      res.sendStatus(200);
       // Gets the message. entry.messaging is an array, but
       // will only ever contain one message, so we get index 0
       let webhook_event = entry.messaging[0];
@@ -64,6 +66,7 @@ app.post("/webhook", (req, res) => {
         res.sendStatus(200);
       }
     });
+    res.sendStatus(200);
   } else {
     // Returns a '404 Not Found' if event is not from a page subscription
     res.sendStatus(404);
