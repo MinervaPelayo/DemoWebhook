@@ -40,6 +40,8 @@ app.listen(process.env.PORT || 1337, () => console.log("webhook is listening"));
 
 // Creates the endpoint for our webhook
 app.post("/webhook", (req, res) => {
+  // Returns a '200 OK' response to all requests
+  res.sendStatus(200);
   // Parse the request body from the POST
   let body = req.body;
 
@@ -61,8 +63,6 @@ app.post("/webhook", (req, res) => {
       if (webhook_event.message) {
         handleMessage(sender_psid, webhook_event.message);
       }
-      // Returns a '200 OK' response to all requests
-      res.sendStatus(200);
     });
   } else {
     // Returns a '404 Not Found' if event is not from a page subscription
