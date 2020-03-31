@@ -69,12 +69,10 @@ app.post("/webhook", (req, res) => {
  // Iterate over each messaging event
  entry.messaging.forEach((messagingEvent) => {
   console.log({messagingEvent});
-      // Get the sender PSID
-  let sender_psid = messagingEvent.sender.id;
-  console.log("Sender PSID: " + sender_psid);
+
 
   if (messagingEvent.message) {
-    handleMessage(sender_psid, messagingEvent.message);
+    handleMessage(messagingEvent);
   } else {
     console.error(
       'Webhook received unknown messagingEvent: ',
@@ -93,10 +91,16 @@ app.post("/webhook", (req, res) => {
 });
 
 // Handles messages events
-function handleMessage(sender_psid, received_message) {
+function handleMessage(received_message) {
   let response;
+      
+  
   // Check if the message contains text
-  if (received_message.text) {
+  if (received_message.message.text) {
+
+            // Get the sender PSID
+            let sender_psid = received_message.sender.id;
+            console.log("Sender PSID: " + sender_psid);
     // Create the payload for a basic text message
     response = {
       text: `You sent the message: "${received_message.text}".`
