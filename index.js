@@ -92,13 +92,14 @@ app.post("/webhook", (req, res) => {
 
 // Handles messages events
 function handleMessage(received_message) {
+  let message = received_message.message;
   let response;
       
               // Get the sender PSID
-              let sender_psid = received_message.sender.id;
-              console.log("Sender PSID: " + sender_psid);
+  let sender_psid = received_message.sender.id;
+  console.log("Sender PSID: " + sender_psid);
   // Check if the message contains text
-  if (received_message.message.text) {
+  if (message.text) {
 
     // Create the payload for a basic text message
     response = {
