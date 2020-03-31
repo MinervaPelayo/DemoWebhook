@@ -166,7 +166,7 @@ if (data.object === 'page') {
       console.log({messagingEvent});
 
       if (messagingEvent.message) {
-        if (messagingEvent.message.mid===(messagemid)){
+        if (messagemid === messagingEvent.message.mid){
           console.log("Message already handled")
         }else{
         messagemid=messagingEvent.message.mid;
