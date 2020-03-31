@@ -173,8 +173,7 @@ if (data.object === 'page') {
         handleReceivePostback(messagingEvent);
       } else {
         console.log(
-          'Webhook received unknown messagingEvent: ',
-          messagingEvent
+          'Webhook received unknown messagingEvent: '
         );
       }
     });
