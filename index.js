@@ -191,7 +191,7 @@ if (data.object === 'page') {
 const handleReceiveMessage = (event) => {
   const message = event.message;
   const senderId = event.sender.id;
-  const response;
+  let response;
 
   if (message.text) {
     response = {
