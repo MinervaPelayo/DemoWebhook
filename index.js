@@ -149,7 +149,7 @@ app.post('/webhook', (req, res) => {
   awhile to process.
 */
 res.sendStatus(200);
-let messagemid = "";
+let timestamp = 0;
 const data = req.body;
 console.log('Webhook POST', JSON.stringify(data));
 
@@ -160,19 +160,17 @@ if (data.object === 'page') {
   data.entry.forEach((pageEntry) => {
     if (!pageEntry.messaging) {
       return;
-    }
+    } else if(timestamp===pageEntry.messaging[0].timestamp){
+      console.log("Event already handled")
+    }else{
+    timestamp=pageEntry.messaging[0].timestamp;
     // Iterate over each messaging event and handle accordingly
     pageEntry.messaging.forEach((messagingEvent) => {
       console.log({messagingEvent});
 
       if (messagingEvent.message) {
-        if (messagemid === messagingEvent.message.mid){
-          console.log("Message already handled")
-        }else{
-        messagemid=messagingEvent.message.mid;
-        console.log("/////////////"+messagemid);
-        handleReceiveMessage(messagingEvent);
-        }
+          handleReceiveMessage(messagingEvent);
+        
       }
 
       else if (messagingEvent.postback) {
@@ -183,6 +181,7 @@ if (data.object === 'page') {
         );
       }
     });
+  }
   });
 }
 });
