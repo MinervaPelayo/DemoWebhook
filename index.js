@@ -149,7 +149,7 @@ app.post('/webhook', (req, res) => {
   awhile to process.
 */
 res.sendStatus(200);
-
+let timestamp=0;
 const data = req.body;
 console.log('Webhook POST', JSON.stringify(data));
 
@@ -166,10 +166,15 @@ if (data.object === 'page') {
       console.log({messagingEvent});
 
       if (messagingEvent.message) {
+        if (messagingEvent.timestamp===(timestamp)){
+          console.log("Message already handled")
+        }else{
+        timestamp=messagingEvent.timestamp;
         handleReceiveMessage(messagingEvent);
+        }
       }
 
-      if (messagingEvent.postback) {
+      else if (messagingEvent.postback) {
         handleReceivePostback(messagingEvent);
       } else {
         console.log(
