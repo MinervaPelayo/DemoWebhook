@@ -37,7 +37,7 @@ app.get("/webhook", (req, res) => {
 });
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log("webhook is listening"));
-
+/*
 // Creates the endpoint for our webhook
 app.post("/webhook", (req, res) => {
   // Returns a '200 OK' response to all requests
@@ -62,7 +62,7 @@ app.post("/webhook", (req, res) => {
       // pass the event to the appropriate handler function
       if (webhook_event.message) {
         handleMessage(sender_psid, webhook_event.message);
-      }               */
+      }               
 
 
 
@@ -135,4 +135,103 @@ function callSendAPI(sender_psid, response) {
       }
     }
   );
+}*/
+
+app.post('/webhook', (req, res) => {
+  /*
+  You must send back a status of 200(success) within 20 seconds
+  to let us know you've successfully received the callback.
+  Otherwise, the request will time out.
+  When a request times out from Facebook the service attempts
+  to resend the message.
+  This is why it is good to send a response immediately so you
+  don't get duplicate messages in the event that a request takes
+  awhile to process.
+*/
+res.sendStatus(200);
+
+const data = req.body;
+console.log('Webhook POST', JSON.stringify(data));
+
+// Make sure this is a page subscription
+if (data.object === 'page') {
+  // Iterate over each entry
+  // There may be multiple if batched
+  data.entry.forEach((pageEntry) => {
+    if (!pageEntry.messaging) {
+      return;
+    }
+    // Iterate over each messaging event and handle accordingly
+    pageEntry.messaging.forEach((messagingEvent) => {
+      console.log({messagingEvent});
+
+      if (messagingEvent.message) {
+        handleReceiveMessage(messagingEvent);
+      }
+
+      if (messagingEvent.postback) {
+        handleReceivePostback(messagingEvent);
+      } else {
+        console.log(
+          'Webhook received unknown messagingEvent: ',
+          messagingEvent
+        );
+      }
+    });
+  });
 }
+});
+
+/*
+ * handleReceiveMessage - Message Event called when a message is sent to
+ * your page. The 'message' object format can vary depending on the kind
+ * of message that was received. Read more at: https://developers.facebook.com/
+ * docs/messenger-platform/webhook-reference/message-received
+ */
+const handleReceiveMessage = (event) => {
+  const message = event.message;
+  const senderId = event.sender.id;
+  const response;
+
+  if (message.text) {
+    response = {
+      text: `You sent the message: "${message.text}".`
+    };
+    sendMessage(senderId, response); 
+  }
+};
+
+const sendMessage = (recipientId, response) => {
+  // Construct the message body
+  let messageToSend = {
+    recipient: {
+      id: recipientId
+    },
+    message: response
+  };
+
+  request({
+    uri: `https://graph.facebook.com/v3.2/me/messages`,
+    qs: { access_token: PAGE_ACCESS_TOKEN },
+    method: 'POST',
+    json: messageToSend,
+
+  }, (error, response, body) => {
+    if (!error && response.statusCode === 200) {
+      // Message has been successfully received by Facebook
+      console.log(
+        `Successfully sent message to endpoint: `,
+        JSON.stringify(body)
+      );
+
+    } else {
+      // Message has not been successfully received by Facebook
+      console.error(
+        `Failed calling Messenger API endpoint`,
+        response.statusCode,
+        response.statusMessage,
+        body.error,
+      );
+    }
+  });
+};
