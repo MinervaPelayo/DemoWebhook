@@ -69,11 +69,12 @@ app.post("/webhook", (req, res) => {
  // Iterate over each messaging event
  entry.messaging.forEach((messagingEvent) => {
   console.log({messagingEvent});
-
+      // Get the sender PSID
   let sender_psid = messagingEvent.sender.id;
   console.log("Sender PSID: " + sender_psid);
+
   if (messagingEvent.message) {
-    handleMessage(messagingEvent, sender_psid);
+    handleMessage(sender_psid, messagingEvent.message);
   } else {
     console.error(
       'Webhook received unknown messagingEvent: ',
